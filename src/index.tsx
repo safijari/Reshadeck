@@ -11,40 +11,53 @@ import {
   ServerAPI,
   showContextMenu,
   staticClasses,
+  Dropdown,
+  DropdownOption,
+  SingleDropdownOption,
 } from "decky-frontend-lib";
 import { VFC, useState, useEffect } from "react";
 import { VscDebugDisconnect } from "react-icons/vsc";
 import logo from "../assets/logo.png";
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
-  const [enabled, setEnabled] = useState<boolean>(false);
-
-  const onClick = async (e) => {
-      serverAPI.callPluginMethod('set_enabled', { enabled: e });
-  };
+  const [shader_list, set_shader_list] = useState<String[]>([]);
+  const baseShader = { data: "0", label: "None" } as SingleDropdownOption;
+  const [selectedShader, setSelectedShader] = useState<DropdownOption>(baseShader);
+  const [shaderOptions, setShaderOptions] = useState<DropdownOption[]>([baseShader]);
+    
+    const getShaderOptions = () => {
+        let options: DropdownOption[] = [];
+        options.push(baseShader);
+        for (let i = 0; i < shader_list.length; i++) {
+            let option = { data: shader_list[i], label: shader_list[i] } as SingleDropdownOption;
+            options.push(option);
+        }
+        return options;
+    }
 
   const initState = async () => {
-    const getIsEnabledResponse = await serverAPI.callPluginMethod('is_enabled', {});
-    setEnabled(getIsEnabledResponse.result as boolean);
+    let plugin_list_resp = await serverAPI.callPluginMethod("get_plugin_list", {});
+    set_shader_list(plugin_list_resp.result as String[])
+    setShaderOptions(getShaderOptions());
   }
 
-    useEffect(() => {
-            initState();
-    }, []);
+  useEffect(() => {
+      initState();
+  }, []);
+
   return (
     <PanelSection title="Panel Section">
       <PanelSectionRow>
-      <ToggleField
-              label="Enable"
-              checked={enabled}
-              onChange={(e) => { setEnabled(e); onClick(e); }}
-      />
-      </PanelSectionRow>
-      <PanelSectionRow>
-        <div>You need to pair it first in desktop mode.</div>
-      </PanelSectionRow>
-      <PanelSectionRow>
-        <div>Remember to turn it off when you are not using it!</div>
+        <Dropdown
+                menuLabel="Select shader"
+                strDefaultLabel={selectedShader.label as string}
+                rgOptions={getShaderOptions()}
+                selectedOption={selectedShader}
+                onChange={async (newSelectedShader) => {
+                    setSelectedShader(newSelectedShader);
+                    serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data});
+                }}
+        />
       </PanelSectionRow>
     </PanelSection>
   );

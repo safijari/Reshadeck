@@ -21,10 +21,17 @@ class Plugin:
     _enabled = False
 
     async def get_plugin_list(self):
-        return ["nothing", "here"]
+        shaders = [str(p.name) for p in Path(destination_folder).glob("*.fx")]
+        return shaders
 
-    async def set_plugin(self, plugin_name):
-        logger.info("I did the thing " + plugin_name)
+    async def set_shader(self, shader_name):
+        logger.info("I did the thing " + shader_name)
+        try:
+            ret = subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True)
+            decky_plugin.logger.info(ret)
+        except Exception:
+            decky_plugin.logger.exepction("setting shader")
 
     async def _main(self):
         decky_plugin.logger.info("Initialized")
+        decky_plugin.logger.info(str(await Plugin.get_plugin_list(self)))
