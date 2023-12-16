@@ -1,0 +1,54 @@
+{
+  "name": "reshadeck",
+  "version": "0.0.1",
+  "description": "A plugin for loading reshade plugins on steam deck",
+  "scripts": {
+    "build": "shx rm -rf dist && rollup -c",
+    "watch": "rollup -c -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safijari/reshadeck"
+  },
+  "keywords": [
+    "decky",
+    "plugin",
+    "plugin-template",
+    "steam-deck",
+    "deck"
+  ],
+  "author": "Jariullah Safi <safijari@isu.edu>",
+  "license": "GPL 3",
+  "bugs": {
+    "url": "https://github.com/safijari/reshadeck/issues"
+  },
+  "homepage": "https://github.com/safijari/reshadeck#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@types/react": "16.14.0",
+    "@types/webpack": "^5.28.0",
+    "rollup": "^2.77.1",
+    "rollup-plugin-import-assets": "^1.1.1",
+    "shx": "^0.3.4",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "Shotty": "link:",
+    "decky-frontend-lib": "^3.20.7",
+    "react-icons": "^4.4.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "react-dom"
+      ]
+    }
+  }
+}

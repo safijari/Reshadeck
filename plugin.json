@@ -1,0 +1,10 @@
+{
+  "name": "Reshadeck",
+  "author": "Jariullah Safi",
+  "flags": ["debug"],
+  "publish": {
+    "tags": ["control"],
+    "description": "A plugin for loading reshade shaders on steam deck",
+    "image": "https://github.com/safijari/reshadeck/raw/main/reshadeck-screenshot.png"
+  }
+}
