@@ -21,7 +21,7 @@ class Plugin:
     _enabled = False
 
     async def get_plugin_list(self):
-        shaders = [str(p.name) for p in Path(destination_folder).glob("*.fx")]
+        shaders = sorted([str(p.name) for p in Path(destination_folder).glob("*.fx")])
         return shaders
 
     async def set_shader(self, shader_name):
