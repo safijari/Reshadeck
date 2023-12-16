@@ -14,6 +14,9 @@ import traceback
 
 logger = decky_plugin.logger
 
+destination_folder = decky_plugin.DECKY_USER_HOME + "/.local/share/gamescope/reshade/Shaders"
+shaders_folder = decky_plugin.DECKY_PLUGIN_DIR + "/shaders"
+
 class Plugin:
     _enabled = False
 
