@@ -42,7 +42,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
     set_shader_list(le_list)
     setShaderOptions(getShaderOptions(le_list));
     let curr = await serverAPI.callPluginMethod("get_current_shader", {});
-    setSelectedShader({data: curr.result, label: (curr.result == "0" ? "None" else curr.result)} as SingleDropdownOption);
+    setSelectedShader({data: curr.result, label: (curr.result == "0" ? "None" : curr.result)} as SingleDropdownOption);
   }
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
   }, []);
 
   return (
-    <PanelSection title="Panel Section">
+    <PanelSection title="Select Shader">
       <PanelSectionRow>
         <Dropdown
                 menuLabel="Select shader"
@@ -62,6 +62,12 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
                     await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data});
                 }}
         />
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <div>Place any custom shaders in <pre>~/.local/share/gamescope</pre><pre>/reshade/Shaders</pre> so that the .fx files are in the root of the Shaders folder.</div>
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <div>WARNING: Shaders can lead to dropped frames and possibly even severe performance problems.</div>
       </PanelSectionRow>
     </PanelSection>
   );
