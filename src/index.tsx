@@ -16,7 +16,7 @@ import {
   SingleDropdownOption,
 } from "decky-frontend-lib";
 import { VFC, useState, useEffect } from "react";
-import { VscDebugDisconnect } from "react-icons/vsc";
+import { MdWbShade } from "react-icons/md";
 import logo from "../assets/logo.png";
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
@@ -77,7 +77,7 @@ export default definePlugin((serverApi: ServerAPI) => {
   return {
     title: <div className={staticClasses.Title}>Screentshot Aggregator</div>,
     content: <Content serverAPI={serverApi} />,
-    icon: <VscDebugDisconnect />,
+    icon: <MdWbShade />,
     onDismount() {
     },
   };
