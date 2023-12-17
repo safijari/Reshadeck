@@ -15,6 +15,11 @@ root of the `Shaders` folder. Then you can pick and apply the shader using the p
 - Not all features of reshade are supported
 - Some shaders can cause the Deck to crash
 
+# A note on Deck OLED Fringing Patterns
+The subpixel pattern of the Steam Deck OLED (Samsung screen at least), leads to some fringing that is visible to a small minority of people.
+It is possible to [largely eliminate this fringing](https://gist.github.com/safijari/1b936cbbdebe341fbe340bcfecb04450) using a shader. That 
+shader is included by default in this plugin.
+
 # Places to find more shaders
 
 https://github.com/Matsilagi/RSRetroArch/tree/main/Shaders
