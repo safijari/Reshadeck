@@ -20,25 +20,29 @@ import { VscDebugDisconnect } from "react-icons/vsc";
 import logo from "../assets/logo.png";
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
-  const [shader_list, set_shader_list] = useState<String[]>([]);
-  const baseShader = { data: "0", label: "None" } as SingleDropdownOption;
+  const baseShader = { data: "None", label: "No Shader" } as SingleDropdownOption;
+  const [shader_list, set_shader_list] = useState<string[]>([]);
   const [selectedShader, setSelectedShader] = useState<DropdownOption>(baseShader);
   const [shaderOptions, setShaderOptions] = useState<DropdownOption[]>([baseShader]);
     
-    const getShaderOptions = () => {
-        let options: DropdownOption[] = [];
-        options.push(baseShader);
-        for (let i = 0; i < shader_list.length; i++) {
-            let option = { data: shader_list[i], label: shader_list[i] } as SingleDropdownOption;
-            options.push(option);
-        }
-        return options;
-    }
+  const getShaderOptions = (le_list: string[]) => {
+      let options: DropdownOption[] = [];
+      options.push(baseShader);
+      for (let i = 0; i < le_list.length; i++) {
+          let option = { data: le_list[i], label: le_list[i] } as SingleDropdownOption;
+          options.push(option);
+      }
+      return options;
+  }
+
 
   const initState = async () => {
     let plugin_list_resp = await serverAPI.callPluginMethod("get_plugin_list", {});
-    set_shader_list(plugin_list_resp.result as String[])
-    setShaderOptions(getShaderOptions());
+    let le_list = plugin_list_resp.result as string[];
+    set_shader_list(le_list)
+    setShaderOptions(getShaderOptions(le_list));
+    let curr = await serverAPI.callPluginMethod("get_current_shader", {});
+    setSelectedShader({data: curr.result, label: (curr.result == "0" ? "None" else curr.result)} as SingleDropdownOption);
   }
 
   useEffect(() => {
@@ -51,11 +55,11 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
         <Dropdown
                 menuLabel="Select shader"
                 strDefaultLabel={selectedShader.label as string}
-                rgOptions={getShaderOptions()}
+                rgOptions={shaderOptions}
                 selectedOption={selectedShader}
-                onChange={async (newSelectedShader) => {
-                    setSelectedShader(newSelectedShader);
-                    serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data});
+                onChange={async (newSelectedShader: DropdownOption) => {
+                    console.log(selectedShader);
+                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data});
                 }}
         />
       </PanelSectionRow>
