@@ -38,7 +38,11 @@ class Plugin:
             decky_plugin.logger.exepction("setting shader")
 
     async def _main(self):
-        for item in Path(shaders_folder).glob("*.fx"):
-            shutil.copy(item, destination_folder)
-        decky_plugin.logger.info("Initialized")
-        decky_plugin.logger.info(str(await Plugin.get_plugin_list(self)))
+        try:
+            Path(destination_folder).mkdir(parents=True, exist_ok=True)
+            for item in Path(shaders_folder).glob("*.fx"):
+                shutil.copy(item, destination_folder)
+            decky_plugin.logger.info("Initialized")
+            decky_plugin.logger.info(str(await Plugin.get_plugin_list(self)))
+        except Exception:
+            decky_plugin.logger.exepction("main")
