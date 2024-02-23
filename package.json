@@ -41,7 +41,8 @@
   "dependencies": {
     "Shotty": "link:",
     "decky-frontend-lib": "^3.20.7",
-    "react-icons": "^4.4.0"
+    "react-icons": "^4.4.0",
+    "reshadeck": "link:"
   },
   "pnpm": {
     "peerDependencyRules": {

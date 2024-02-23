@@ -10,6 +10,9 @@ dependencies:
   react-icons:
     specifier: ^4.4.0
     version: 4.4.0
+  reshadeck:
+    specifier: 'link:'
+    version: 'link:'
 
 devDependencies:
   '@rollup/plugin-commonjs':
