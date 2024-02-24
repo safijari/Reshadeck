@@ -66,8 +66,14 @@ class ReshadeckLogic
         if (Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
-            console.log('Value exceeds 20');
             await serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
+            await this.serverAPI.toaster.toast({
+                                    title: "Waking Up Screen",
+                                    body: "Waking Up Screen",
+                                    duration: 500,
+                                    critical: true
+                            });
+
         }
     }
 }
