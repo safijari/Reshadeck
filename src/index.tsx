@@ -24,7 +24,7 @@ class ReshadeckLogic
 {
     serverAPI: ServerAPI;
     dataTakenAt: number = Date.now();
-    screensaverActive: bool = false;
+    screensaverActive: boolean = false;
 
     constructor(serverAPI: ServerAPI) {
 	this.serverAPI = serverAPI;
@@ -66,15 +66,15 @@ class ReshadeckLogic
         if (Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
-            if (this.screensaverActive) {
-                await serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
+            if (this.screensaverActive == true) {
+                await this.serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
                 await this.serverAPI.toaster.toast({
                                         title: "Waking Up Screen",
                                         body: "Waking Up Screen",
                                         duration: 500,
                                         critical: true
                                 });
-                this.screeensaverActive = false;
+                this.screensaverActive = false;
             }
         }
     }
@@ -141,13 +141,16 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                 selectedOption={selectedScreenSaver}
                 onChange={async (newSelectedScreenSaver: DropdownOption) => {
                     await serverAPI.callPluginMethod("set_screensaver", {"shader_name": newSelectedScreenSaver.data});
+                    setSelectedScreenSaver(newSelectedScreenSaver.data);
                 }}
         />
-          <ButtonItem onClick={async () => {
+        <ButtonItem onClick={async () => {
             console.log(selectedScreenSaver);
-            await serverAPI.callPluginMethod("apply_shader", {"shader": selectedScreenSaver});
+            let ret = await serverAPI.callPluginMethod("apply_shader", {"shader": selectedScreenSaver});
+            console.log(ret);
             logic.screensaverActive = true;
-            }}>Start Screensaver</ButtonItem>
+          }
+        }>Start Screensaver</ButtonItem>
       </PanelSectionRow>
       <PanelSectionRow>
         <div>Place any custom shaders in <pre>~/.local/share/gamescope</pre><pre>/reshade/Shaders</pre> so that the .fx files are in the root of the Shaders folder.</div>
