@@ -21,15 +21,22 @@ class Plugin:
     _enabled = False
     _current = "0"
 
-    async def get_plugin_list(self):
-        shaders = sorted([str(p.name) for p in Path(destination_folder).glob("*.fx")])
+    def _get_all_shaders():
+        return sorted([str(p.name) for p in Path(destination_folder).glob("*.fx")])
+
+    async def get_shader_list(self):
+        shaders = [s for s in Plugin._get_all_shaders() if not s.startswith("SS_")]
+        return shaders
+
+    async def get_screensaver_list(self):
+        shaders = [s for s in Plugin._get_all_shaders() if s.startswith("SS_")]
         return shaders
 
     async def get_current_shader(self):
         return Plugin._current
 
     async def set_shader(self, shader_name):
-        logger.info("I did the thing " + shader_name)
+        logger.info("Applying shader " + shader_name)
         try:
             ret = subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True)
             decky_plugin.logger.info(ret)
@@ -46,6 +53,6 @@ class Plugin:
                 except Exception:
                     decky_plugin.logger.debug(f"could not copy {item}")
             decky_plugin.logger.info("Initialized")
-            decky_plugin.logger.info(str(await Plugin.get_plugin_list(self)))
+            decky_plugin.logger.info(str(await Plugin.get_shader_list(self)))
         except Exception:
             decky_plugin.logger.exepction("main")

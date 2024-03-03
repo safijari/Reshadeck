@@ -96,7 +96,7 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
 
 
   const initState = async () => {
-    let plugin_list_resp = await serverAPI.callPluginMethod("get_plugin_list", {});
+    let plugin_list_resp = await serverAPI.callPluginMethod("get_shader_list", {});
     let le_list = plugin_list_resp.result as string[];
     set_shader_list(le_list)
     setShaderOptions(getShaderOptions(le_list));
