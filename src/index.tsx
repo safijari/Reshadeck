@@ -24,7 +24,7 @@ class ReshadeckLogic
 {
     serverAPI: ServerAPI;
     dataTakenAt: number = Date.now();
-    screensaverActive: false;
+    screensaverActive: bool = false;
 
     constructor(serverAPI: ServerAPI) {
 	this.serverAPI = serverAPI;
@@ -66,7 +66,7 @@ class ReshadeckLogic
         if (Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
-            if (this.screensaveractive) {
+            if (this.screensaverActive) {
                 await serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
                 await this.serverAPI.toaster.toast({
                                         title: "Waking Up Screen",
@@ -74,8 +74,8 @@ class ReshadeckLogic
                                         duration: 500,
                                         critical: true
                                 });
+                this.screeensaverActive = false;
             }
-            this.screeensaveractive = false;
         }
     }
 }
@@ -126,7 +126,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                 rgOptions={shaderOptions}
                 selectedOption={selectedShader}
                 onChange={async (newSelectedShader: DropdownOption) => {
-                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data, "is_screensaver": False});
+                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data});
                 }}
         />
       </PanelSectionRow>
@@ -140,12 +140,13 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                 rgOptions={screenSaverOptions}
                 selectedOption={selectedScreenSaver}
                 onChange={async (newSelectedScreenSaver: DropdownOption) => {
-                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedScreenSaver.data, "is_screensaver": True});
+                    await serverAPI.callPluginMethod("set_screensaver", {"shader_name": newSelectedScreenSaver.data});
                 }}
         />
           <ButtonItem onClick={async () => {
-            await serverAPI.callPluginMethod("apply_shader", {"shader_name": selectedScreenSaver});
-              logic.screensaveractive = true;
+            console.log(selectedScreenSaver);
+            await serverAPI.callPluginMethod("apply_shader", {"shader": selectedScreenSaver});
+            logic.screensaverActive = true;
             }}>Start Screensaver</ButtonItem>
       </PanelSectionRow>
       <PanelSectionRow>
@@ -164,7 +165,7 @@ export default definePlugin((serverApi: ServerAPI) => {
 
   return {
     title: <div className={staticClasses.Title}>Reshadeck</div>,
-    content: <Content serverAPI={serverApi, logic} />,
+    content: <Content serverAPI={serverApi} logic={logic} />,
     icon: <MdWbShade />,
     onDismount() {
         input_register.unregister();
