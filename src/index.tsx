@@ -24,7 +24,7 @@ class ReshadeckLogic
 {
     serverAPI: ServerAPI;
     dataTakenAt: number = Date.now();
-    // prevReading: any = {x: null, y: null, z: null};
+    screensaverActive: false;
 
     constructor(serverAPI: ServerAPI) {
 	this.serverAPI = serverAPI;
@@ -66,27 +66,32 @@ class ReshadeckLogic
         if (Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
-            await serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
-            await this.serverAPI.toaster.toast({
-                                    title: "Waking Up Screen",
-                                    body: "Waking Up Screen",
-                                    duration: 500,
-                                    critical: true
-                            });
-
+            if (this.screensaveractive) {
+                await serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
+                await this.serverAPI.toaster.toast({
+                                        title: "Waking Up Screen",
+                                        body: "Waking Up Screen",
+                                        duration: 500,
+                                        critical: true
+                                });
+            }
+            this.screeensaveractive = false;
         }
     }
 }
 
-const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
+const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverAPI, logic }) => {
   const baseShader = { data: "None", label: "No Shader" } as SingleDropdownOption;
+  const baseScreensaver = { data: "None", label: "No Screensaver" } as SingleDropdownOption;
   const [shader_list, set_shader_list] = useState<string[]>([]);
   const [selectedShader, setSelectedShader] = useState<DropdownOption>(baseShader);
   const [shaderOptions, setShaderOptions] = useState<DropdownOption[]>([baseShader]);
+  const [selectedScreenSaver, setSelectedScreenSaver] = useState<DropdownOption>(baseShader);
+  const [screenSaverOptions, setScreenSaverOptions] = useState<DropdownOption[]>([baseScreensaver]);
     
-  const getShaderOptions = (le_list: string[]) => {
+  const getShaderOptions = (le_list: string[], baseShaderOrSS: any) => {
       let options: DropdownOption[] = [];
-      options.push(baseShader);
+      options.push(baseShaderOrSS);
       for (let i = 0; i < le_list.length; i++) {
           let option = { data: le_list[i], label: le_list[i] } as SingleDropdownOption;
           options.push(option);
@@ -94,14 +99,18 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
       return options;
   }
 
-
   const initState = async () => {
-    let plugin_list_resp = await serverAPI.callPluginMethod("get_shader_list", {});
-    let le_list = plugin_list_resp.result as string[];
-    set_shader_list(le_list)
-    setShaderOptions(getShaderOptions(le_list));
+    let shader_list = (await serverAPI.callPluginMethod("get_shader_list", {})).result as string[];
+    let screensaver_list = (await serverAPI.callPluginMethod("get_screensaver_list", {})).result as string[];
+    set_shader_list(shader_list)
+    setShaderOptions(getShaderOptions(shader_list, baseShader));
+    setScreenSaverOptions(getShaderOptions(screensaver_list, baseScreensaver));
+
     let curr = await serverAPI.callPluginMethod("get_current_shader", {});
     setSelectedShader({data: curr.result, label: (curr.result == "0" ? "None" : curr.result)} as SingleDropdownOption);
+
+    let currSS = await serverAPI.callPluginMethod("get_current_screensaver", {});
+    setSelectedShader({data: currSS.result, label: (currSS.result == "0" ? "None" : currSS.result)} as SingleDropdownOption);
   }
 
   useEffect(() => {
@@ -117,10 +126,27 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
                 rgOptions={shaderOptions}
                 selectedOption={selectedShader}
                 onChange={async (newSelectedShader: DropdownOption) => {
-                    console.log(selectedShader);
-                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data});
+                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedShader.data, "is_screensaver": False});
                 }}
         />
+      </PanelSectionRow>
+      <PanelSectionRow>
+      <b>Select Screensaver</b>
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <Dropdown
+                menuLabel="Select screensaver"
+                strDefaultLabel={selectedScreenSaver.label as string}
+                rgOptions={screenSaverOptions}
+                selectedOption={selectedScreenSaver}
+                onChange={async (newSelectedScreenSaver: DropdownOption) => {
+                    await serverAPI.callPluginMethod("set_shader", {"shader_name": newSelectedScreenSaver.data, "is_screensaver": True});
+                }}
+        />
+          <ButtonItem onClick={async () => {
+            await serverAPI.callPluginMethod("apply_shader", {"shader_name": selectedScreenSaver});
+              logic.screensaveractive = true;
+            }}>Start Screensaver</ButtonItem>
       </PanelSectionRow>
       <PanelSectionRow>
         <div>Place any custom shaders in <pre>~/.local/share/gamescope</pre><pre>/reshade/Shaders</pre> so that the .fx files are in the root of the Shaders folder.</div>
@@ -138,7 +164,7 @@ export default definePlugin((serverApi: ServerAPI) => {
 
   return {
     title: <div className={staticClasses.Title}>Reshadeck</div>,
-    content: <Content serverAPI={serverApi} />,
+    content: <Content serverAPI={serverApi, logic} />,
     icon: <MdWbShade />,
     onDismount() {
         input_register.unregister();

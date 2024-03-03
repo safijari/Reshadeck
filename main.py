@@ -20,6 +20,7 @@ shaders_folder = decky_plugin.DECKY_PLUGIN_DIR + "/shaders"
 class Plugin:
     _enabled = False
     _current = "0"
+    _current_screensaver = "0"
 
     def _get_all_shaders():
         return sorted([str(p.name) for p in Path(destination_folder).glob("*.fx")])
@@ -35,12 +36,24 @@ class Plugin:
     async def get_current_shader(self):
         return Plugin._current
 
-    async def set_shader(self, shader_name):
+    async def get_current_screensaver(self):
+        return Plugin._current_screensaver
+
+    async def apply_shader(self, shader_name):
+        try:
+            return subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True)
+        except Exception:
+            decky_plugin.logger.exepction("apply screensaver")
+
+    async def set_shader(self, shader_name, is_screensaver):
         logger.info("Applying shader " + shader_name)
         try:
-            ret = subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True)
-            decky_plugin.logger.info(ret)
-            Plugin._current = shader_name
+            if not is_screensaver:
+                ret = await Plugin.apply_shader(shader_name)
+                decky_plugin.logger.info(ret)
+                Plugin._current = shader_name
+            else:
+                Plugin._current_screensaver = shader_name
         except Exception:
             decky_plugin.logger.exepction("setting shader")
 
