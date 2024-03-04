@@ -30,6 +30,9 @@ class ReshadeckLogic {
     }
 
     handleButtonInput = async (val: any[]) => {
+        if (!this.screensaverActive) {
+            return;
+        }
         let cancel = false;
         const { flSoftwareGyroDegreesPerSecondPitch,
             flSoftwareGyroDegreesPerSecondYaw,
@@ -57,7 +60,7 @@ class ReshadeckLogic {
             cancel = true;
         }
 
-        if (cancel && this.screensaverActive == true) {
+        if (cancel) {
             await this.serverAPI.callPluginMethod("apply_shader", { "screensaver": false });
             await this.serverAPI.toaster.toast({
                 title: "Waking Up Screen",
@@ -71,7 +74,6 @@ class ReshadeckLogic {
 
     handleSuspend = async (val: any) => {
         await this.serverAPI.callPluginMethod("apply_shader", { "screensaver": false });
-        console.log(val);
     }
 }
 
@@ -144,8 +146,9 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                 <ButtonItem onClick={async () => {
                     console.log(selectedScreenSaver);
                     let ret = await serverAPI.callPluginMethod("apply_shader", { "screensaver": true });
-                    console.log(ret);
-                    logic.screensaverActive = true;
+                    setTimeout(() => {
+                        (logic as any).screensaverActive = true;
+                    }, 1000)
                 }
                 }>Start Screensaver</ButtonItem>
             </PanelSectionRow>
