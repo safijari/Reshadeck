@@ -42,10 +42,10 @@ class Plugin:
     async def apply_shader(self, shader):
         logger.info("Applying shader " + shader)
         try:
-            ret = subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True)
+            ret = subprocess.run([shaders_folder + "/set_shader.sh", shader], capture_output=True)
             logger.info(ret)
         except Exception:
-            decky_plugin.logger.exepction("apply screensaver")
+            logger.exepction("apply screensaver")
 
     async def set_shader(self, shader_name):
         logger.info("Setting and applying shader " + shader_name)

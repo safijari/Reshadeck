@@ -110,7 +110,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
     setSelectedShader({data: curr.result, label: (curr.result == "0" ? "None" : curr.result)} as SingleDropdownOption);
 
     let currSS = await serverAPI.callPluginMethod("get_current_screensaver", {});
-    setSelectedShader({data: currSS.result, label: (currSS.result == "0" ? "None" : currSS.result)} as SingleDropdownOption);
+    setSelectedScreenSaver({data: currSS.result, label: (currSS.result == "0" ? "None" : currSS.result)} as SingleDropdownOption);
   }
 
   useEffect(() => {
@@ -144,6 +144,8 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                     setSelectedScreenSaver(newSelectedScreenSaver.data);
                 }}
         />
+      </PanelSectionRow>
+      <PanelSectionRow>
         <ButtonItem onClick={async () => {
             console.log(selectedScreenSaver);
             let ret = await serverAPI.callPluginMethod("apply_shader", {"shader": selectedScreenSaver});
