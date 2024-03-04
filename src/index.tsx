@@ -31,6 +31,7 @@ class ReshadeckLogic
     }
 
     handleButtonInput = async (val: any[]) => {
+        console.log(val);
         if (Date.now() - this.dataTakenAt < 1000) {
             return;
         }
