@@ -67,7 +67,7 @@ class ReshadeckLogic
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
             if (this.screensaverActive == true) {
-                await this.serverAPI.callPluginMethod("set_shader", {"shader_name": "None"});
+                await this.serverAPI.callPluginMethod("apply_shader", {"screensaver": false});
                 await this.serverAPI.toaster.toast({
                                         title: "Waking Up Screen",
                                         body: "Waking Up Screen",
@@ -148,7 +148,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
       <PanelSectionRow>
         <ButtonItem onClick={async () => {
             console.log(selectedScreenSaver);
-            let ret = await serverAPI.callPluginMethod("apply_shader", {"shader": selectedScreenSaver});
+            let ret = await serverAPI.callPluginMethod("apply_shader", {"screensaver": true});
             console.log(ret);
             logic.screensaverActive = true;
           }

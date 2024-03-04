@@ -39,7 +39,8 @@ class Plugin:
     async def get_current_screensaver(self):
         return Plugin._current_screensaver
 
-    async def apply_shader(self, shader):
+    async def apply_shader(self, screensaver):
+        shader = Plugin._current if not screensaver else Plugin._current_screensaver
         logger.info("Applying shader " + shader)
         try:
             ret = subprocess.run([shaders_folder + "/set_shader.sh", shader], capture_output=True)
