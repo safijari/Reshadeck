@@ -71,6 +71,6 @@ class Plugin:
                     decky_plugin.logger.debug(f"could not copy {item}")
             decky_plugin.logger.info("Initialized")
             decky_plugin.logger.info(str(await Plugin.get_shader_list(self)))
-            await Plugin.apply_shader()
+            await Plugin.apply_shader(self, False)
         except Exception:
             decky_plugin.logger.exepction("main")
