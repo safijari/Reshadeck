@@ -20,7 +20,7 @@ shaders_folder = decky_plugin.DECKY_PLUGIN_DIR + "/shaders"
 class Plugin:
     _enabled = False
     _current = "0"
-    _current_screensaver = "0"
+    _current_screensaver = "SS_ScreenOff.fx"
 
     def _get_all_shaders():
         return sorted([str(p.name) for p in Path(destination_folder).glob("*.fx")])

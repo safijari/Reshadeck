@@ -31,52 +31,42 @@ class ReshadeckLogic
     }
 
     handleButtonInput = async (val: any[]) => {
-        console.log(val);
-        if (Date.now() - this.dataTakenAt < 1000) {
+        let cancel = false;
+        const { flSoftwareGyroDegreesPerSecondPitch,
+                flSoftwareGyroDegreesPerSecondYaw,
+                flSoftwareGyroDegreesPerSecondRoll,
+                ulButtons,
+                sLeftStickX,
+                sLeftStickY,
+                sRightStickX,
+                sRightStickY,
+              } = val[0];
+        if (ulButtons != 0) {cancel = true; }
+        if (Math.abs(sLeftStickX) > 5000 || Math.abs(sLeftStickY) > 5000 ||
+            Math.abs(sRightStickX) > 5000 || Math.abs(sRightStickY) > 5000) {
+            cancel = true;
+        }
+
+        if (!cancel && Date.now() - this.dataTakenAt < 1000) {
             return;
         }
-	/*
-	  R2 0
-	  L2 1
-	  R1 2
-	  R2 3
-	  Y  4
-	  B  5
-	  X  6
-	  A  7
-	  UP 8
-	  Right 9
-	  Left 10
-	  Down 11
-	  Select 12
-	  Steam 13
-	  Start 14
-	  QAM  ???
-	  L5 15
-	  R5 16*/
-        // console.log(val[0].flGravityVectorX);
-        // console.log(val[0].flGravityVectorY);
-        // console.log(val[0].flGravityVectorZ);
-        // let reading = {x: val[0].flGravityVectorX, y: val[0].flGravityVectorY, z: val[0].flGravityVectorZ};
-        // this.prevReading = reading;
         this.dataTakenAt = Date.now();
-        // console.log(reading);
-        // console.log(val);
-        const { flSoftwareGyroDegreesPerSecondPitch, flSoftwareGyroDegreesPerSecondYaw, flSoftwareGyroDegreesPerSecondRoll } = val[0];
         let degrees = 5;
-        if (Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
+        if (!cancel && Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
-            if (this.screensaverActive == true) {
-                await this.serverAPI.callPluginMethod("apply_shader", {"screensaver": false});
-                await this.serverAPI.toaster.toast({
-                                        title: "Waking Up Screen",
-                                        body: "Waking Up Screen",
-                                        duration: 500,
-                                        critical: true
-                                });
-                this.screensaverActive = false;
-            }
+            cancel = true;
+        }
+
+        if (cancel && this.screensaverActive == true) {
+            await this.serverAPI.callPluginMethod("apply_shader", {"screensaver": false});
+            await this.serverAPI.toaster.toast({
+                                    title: "Waking Up Screen",
+                                    body: "Waking Up Screen",
+                                    duration: 500,
+                                    critical: true
+                            });
+            this.screensaverActive = false;
         }
     }
 }
@@ -147,7 +137,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
         />
       </PanelSectionRow>
       <PanelSectionRow>
-        <ButtonItem onClick={async () => {
+        <ButtonItem disable={logic.screensaverActive} onClick={async () => {
             console.log(selectedScreenSaver);
             let ret = await serverAPI.callPluginMethod("apply_shader", {"screensaver": true});
             console.log(ret);
