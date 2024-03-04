@@ -3,6 +3,10 @@ Reshade Shader Loader for Decky Plugin Loader for the handheld Steam Game Loader
 More shaders can be added at the `~/.local/share/gamescope/reshade/Shaders` folder such that the `.fx` files are in the 
 root of the `Shaders` folder. Then you can pick and apply the shader using the plugin.
 
+You can also designate shaders as a "screensaver" (one that blacks the screen out is included by default). Screensaver shaders start 
+with "SS_" in their name, are enabled by pushing the aptly labeled button, and will stop running if the Deck is moved, a button is pressed,
+trackpad or stick activity, or the Deck is put to suspend.
+
 ![Example Screenshot](reshadeck.png)
 
 # Caveats
