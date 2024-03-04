@@ -137,7 +137,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
         />
       </PanelSectionRow>
       <PanelSectionRow>
-        <ButtonItem disabled={logic.screensaverActive} onClick={async () => {
+        <ButtonItem onClick={async () => {
             console.log(selectedScreenSaver);
             let ret = await serverAPI.callPluginMethod("apply_shader", {"screensaver": true});
             console.log(ret);
