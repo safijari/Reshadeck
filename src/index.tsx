@@ -65,7 +65,7 @@ class ReshadeckLogic {
             await this.serverAPI.toaster.toast({
                 title: "Waking Up Screen",
                 body: "Waking Up Screen",
-                duration: 500,
+                duration: 100,
                 critical: true
             });
             this.screensaverActive = false;
@@ -149,7 +149,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                     await serverAPI.toaster.toast({
                         title: "Starting Screensaver",
                         body: "Starting Screensaver",
-                        duration: 500,
+                        duration: 100,
                         critical: true
                     });
                     setTimeout(() => {
