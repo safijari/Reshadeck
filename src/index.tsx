@@ -146,6 +146,12 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                 <ButtonItem onClick={async () => {
                     console.log(selectedScreenSaver);
                     let ret = await serverAPI.callPluginMethod("apply_shader", { "screensaver": true });
+                    await serverAPI.toaster.toast({
+                        title: "Starting Screensaver",
+                        body: "Starting Screensaver",
+                        duration: 500,
+                        critical: true
+                    });
                     setTimeout(() => {
                         (logic as any).screensaverActive = true;
                     }, 1000)
