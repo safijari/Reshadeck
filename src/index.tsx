@@ -53,7 +53,7 @@ class ReshadeckLogic {
             return;
         }
         this.dataTakenAt = Date.now();
-        let degrees = 5;
+        let degrees = 10;
         if (!cancel && Math.abs(flSoftwareGyroDegreesPerSecondPitch) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondYaw) > degrees ||
             Math.abs(flSoftwareGyroDegreesPerSecondRoll) > degrees) {
@@ -154,7 +154,7 @@ const Content: VFC<{ serverAPI: ServerAPI, logic: ReshadeckLogic }> = ({ serverA
                     });
                     setTimeout(() => {
                         (logic as any).screensaverActive = true;
-                    }, 1000)
+                    }, 5000)
                 }
                 }>Start Screensaver</ButtonItem>
             </PanelSectionRow>
