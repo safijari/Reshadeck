@@ -51,7 +51,9 @@ class Plugin:
     async def set_shader(self, shader_name):
         logger.info("Setting and applying shader " + shader_name)
         try:
-            ret = subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True)
+            env = os.environ.copy()
+            env["LD_LIBRARY_PATH"] = ""
+            ret = subprocess.run([shaders_folder + "/set_shader.sh", shader_name], capture_output=True,env=env)
             decky_plugin.logger.info(ret)
             Plugin._current = shader_name
         except Exception:
